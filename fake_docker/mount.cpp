@@ -31,6 +31,8 @@ int container_main(void* arg)
 int main()
 {
     printf("Parent [%5d] - start a container!\n", getpid());
+    /*因为/proc 挂载点是共享的，子 namespace 对 /proc 目录的重新挂载影响到了父 namespace，这是通过--make-private将挂载点设为私有*/
+    system("mount --make-private /proc");
     /* 调用clone函数，其中传出一个函数，还有一个栈空间的（为什么传尾指针，因为栈是反着的） */
     int container_pid = clone(container_main, container_stack+STACK_SIZE, CLONE_NEWUTS | CLONE_NEWIPC | CLONE_NEWPID | CLONE_NEWNS | SIGCHLD, NULL);
     /* 等待子进程结束 */
